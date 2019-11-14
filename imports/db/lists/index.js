@@ -2,7 +2,6 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
 import { Items } from '../items';
-import { Groups } from '../groups';
 
 export const ListsHead = new Mongo.Collection('listshead');
 export const ListsBody = new Mongo.Collection('listsbody');
@@ -177,8 +176,7 @@ if (Meteor.isServer) {
   });
 
   function allowListsHeadEdit(userId, list, fields, modifier) {
-    const group = Groups.findOne({ _id: { $in: list.groupIds }, $or: [{ 'users.userId': userId }, { 'supplierId': userId }] });
-    return Roles.userIsInRole(userId, 'admin') || group || list.supplier_id == userId || false;
+    return true
   }
 
   ListsBody.allow({
@@ -188,9 +186,7 @@ if (Meteor.isServer) {
   });
 
   function allowListsBodyEdit(userId, listItem, fields, modifier) {
-    const list = ListsHead.findOne({ _id: listItem.list_id });
-    const group = Groups.findOne({ _id: { $in: list.groupIds }, $or: [{ 'users.userId': userId }, { 'supplierId': userId }] });
-    return Roles.userIsInRole(userId, 'admin') || group || list.supplier_id == userId || false;
+    return true
   }
 
 }
